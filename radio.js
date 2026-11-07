@@ -70,7 +70,7 @@
     if (!("mediaSession" in navigator) || !window.MediaMetadata) return;
     const t = T[cur.i];
     navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: "404.zero", album: `${t.album} · 404 Radio`,
-      artwork: [{ src: new URL(root + t.cover, location.href).href, sizes: "512x512", type: "image/jpeg" }] });
+      artwork: [{ src: new URL(/^https?:/.test(t.cover) ? t.cover : root + t.cover, location.href).href, sizes: "512x512", type: "image/jpeg" }] });
     navigator.mediaSession.playbackState = "playing";
   }
   if ("mediaSession" in navigator) [["play", start], ["pause", stop], ["stop", stop], ["seekto", null], ["seekbackward", null], ["seekforward", null], ["previoustrack", null], ["nexttrack", null]]
