@@ -65,6 +65,26 @@ html.top header{padding-right:calc(var(--g) + clamp(44px,6vmax,88px) + 20px)}
 #dot::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);right:0;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
   white-space:nowrap;color:var(--fg);opacity:0;transition:opacity .2s;pointer-events:none}
 #dot:hover::after,#dot:focus-visible::after{opacity:1}
+/* Радио 404 (radio.js): приёмник в шапке рядом с логотипом. Выкл — красное кольцо; в эфире — точка мигает, рядом трек */
+.radio{display:inline-flex;align-items:center;gap:9px;min-width:0;max-width:min(420px,48vw);background:rgba(0,0,0,.35);border:1px solid var(--line);
+  padding:6px 11px;cursor:pointer;font-size:11px;line-height:1.2;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;transition:border-color .2s}
+.radio:hover,.radio[aria-pressed=true]{border-color:rgba(233,233,230,.5)}
+.radio i{flex:none;width:9px;height:9px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--red)}
+.radio[data-st=air] i{background:var(--red);animation:onair 1.6s steps(2,jump-none) infinite}
+.radio[data-st=tune] i{background:var(--red);animation:onair .5s steps(2,jump-none) infinite}
+.radio .rn{min-width:0;overflow:hidden;text-overflow:ellipsis;text-transform:none;letter-spacing:.02em;font-size:12px;opacity:.85}
+.radio .rn:empty{display:none}
+@keyframes onair{50%{opacity:.2}}
+html.sig .radio{opacity:0;pointer-events:none}
+body[data-page=contact] .radio{background:none;border-color:rgba(17,17,17,.35)}
+body[data-page=contact] .radio i{box-shadow:inset 0 0 0 1.5px var(--ink)}
+body[data-page=contact] .radio[data-st] i{background:var(--ink)}
+body[data-page=contact] .radio[data-st=off] i{background:none}
+.onair-b{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,6fr);gap:var(--g);align-items:start;padding:0 var(--g);margin-bottom:clamp(56px,7vw,110px)}
+.onair-b .lead{margin:10px 0 18px}
+.onair-b .sigbtn .r1,html.onair .onair-b .sigbtn .r0{display:none}
+html.onair .onair-b .sigbtn .r1{display:inline}
+html.onair .onair-b .sigbtn::before{animation:onair 1.6s steps(2,jump-none) infinite}
 
 /* Заголовки. Размер считается от ширины контейнера и длины строки (--n), поэтому ничего не вылезает */
 .fitbox{container-type:inline-size}
@@ -270,6 +290,7 @@ footer .links a{background:none}
 <div class="peek" id="peek"><img alt=""></div>
 <script src="../data.js"></script>
 <script src="../core.js"></script>
+<script src="../radio/list.js"></script>
 <script>
 $("#nav").innerHTML = NAV.map(([k, t]) => `<a data-nav="${k}" href="#/${k}">${t}</a>`).join("");
 $("#fsoc").innerHTML = `<a href="#/contact">${D.email}</a>` + D.social.slice(0, 3).map(([t, u]) => ext(u, t)).join("");
@@ -327,7 +348,11 @@ const VIEWS = {
       <a class="sheet next" href="#/work/${n.id}"><span class="k d">Next work →</span>${T(n.title, 160, "h2")}</a>`;
   },
   music() {
+    const RA = window.RADIO && window.RADIO.tracks;   // блок радио — только если radio.js подключён
     return `<section class="head"><h1 class="h">Music</h1><p class="k">Modular gear and code. Sample-free.</p></section>
+      ${RA ? `<section class="onair-b"><p class="k d">404 Radio</p><div><p class="lead">Our records on air in random order. Everyone listening hears the same moment.</p>
+        <button class="sigbtn" type="button" data-radio><span class="r0">Listen live</span><span class="r1">Turn the radio off</span></button>
+        <p class="k" style="margin-top:14px">In rotation: ${[...new Set(RA.map(t => t.album))].map(esc).join(", ")}</p></div></section>` : ""}
       ${D.releases.map(r => `<article class="rel">
         ${r.cover ? `<div class="cv"><img src="${esc(r.cover)}" alt="${esc(r.title)} cover" loading="lazy"></div>` : `<div class="cv type">A Tribute to Ryuichi Sakamoto</div>`}
         <div><p class="k">${esc(r.kind)} · ${esc(r.date)}${r.label ? " · " + esc(r.label) : ""}</p><h2>${esc(r.title)}</h2>
@@ -390,5 +415,6 @@ function after(p) {
 start();
 </script>
 <script src="../signal.js"></script>
+<script src="../radio.js"></script>
 </body>
 </html>

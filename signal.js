@@ -79,7 +79,9 @@
     snd_on = v; document.documentElement.classList.toggle("snd", v);
     if (v) snd.forEach(a => a.play().catch(() => {}));
     else { snd.forEach(a => a.pause()); dot.style.removeProperty("--pulse"); }
+    dispatchEvent(new CustomEvent("signal:sound", { detail: v }));   // радио (radio.js) замолкает, когда включается шум
   }
+  window.SIGNAL_MUTE = () => { if (snd_on) sound(false); };          // а радио глушит шум, не выключая поле
   function toggle(v = !on) {
     on = v;
     document.documentElement.classList.toggle("sig", on);
