@@ -259,8 +259,13 @@ footer .links a{background:none}
 #app img.ld{opacity:1}
 
 @media (max-width:820px){
-  header{flex-wrap:wrap;row-gap:10px}
-  nav{order:3;width:100%;margin-left:0;overflow-x:auto;scrollbar-width:none;gap:16px}
+  header{flex-wrap:wrap;row-gap:16px}
+  /* Меню на телефоне — своей строкой на всю ширину: место под точку справа нужно только первой строке (логотип и радио).
+     Раньше строка была уже экрана и «Contact» обрезался. Если не влезает (экраны ~320px) — переносится, но не обрезается. */
+  nav{order:3;margin-left:0;flex-wrap:wrap;gap:8px 16px;width:calc(100% + var(--dotz) + 18px);margin-right:calc(-1 * (var(--dotz) + 18px))}
+  html.top #dot{width:42px;height:42px}
+  html.top header{padding-right:calc(var(--g) + 62px)}
+  html.top nav{width:calc(100% + 62px);margin-right:-62px}
   .about,.meta,.rel,.tz .intro{grid-template-columns:minmax(0,1fr)}
   .pair{grid-template-columns:minmax(0,1fr)}
   .off{width:100%}
@@ -274,6 +279,8 @@ footer .links a{background:none}
   .head{padding-top:calc(140px + env(safe-area-inset-top,0px))}
   .peek{display:none}
 }
+@media (max-width:520px){nav{justify-content:space-between;gap:8px 10px}}
+@media (max-width:370px){nav{letter-spacing:.06em}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
